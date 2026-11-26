@@ -31,7 +31,7 @@ function appProbe() {
     requests: [],
     commits: 0,
     lastCommit: 0,
-    shellOnly: null,
+    serverHtml: null,
   };
 
   // Frames: every callback the page asks for, until it runs or is cancelled. The probe's own waits use the original
@@ -124,13 +124,15 @@ function appProbe() {
   new MutationObserver(() => { state.lastMutation = now(); })
     .observe(document, { childList: true, subtree: true, attributes: true, characterData: true });
 
-  // The server's HTML, before the app's scripts run: did it hold the page, or only the app's empty element (a route
-  // drawn in the browser only marks the body `ngcm`)?
+  // The server's HTML, before the app's scripts run: did Angular's server draw the page (its root rendered, the data of
+  // hydration, the early event contract), or send only the app's empty element (a route drawn in the browser only
+  // marks the body `ngcm`; an app without server rendering sends its plain index.html)?
   document.addEventListener('readystatechange', () => {
-    if (document.readyState !== 'interactive' || state.shellOnly !== null) return;
-    if (document.body && document.body.hasAttribute('ngcm')) { state.shellOnly = true; return; }
+    if (document.readyState !== 'interactive' || state.serverHtml !== null) return;
+    const ngcm = !!(document.body && document.body.hasAttribute('ngcm'));
+    const drawn = !ngcm && !!(serverDrawn() || window._ejsas || document.querySelector('[ngh]'));
     const root = rootElement();
-    state.shellOnly = root ? root.children.length === 0 : null;
+    state.serverHtml = { ngcm, drawn, rootChildren: root ? root.children.length : null };
   });
 
   // Angular on the page: the root element it bootstrapped or rendered on the server (ng-version), the data of
@@ -198,7 +200,15 @@ function appProbe() {
     commits: () => state.commits,
     requestsSince: (seq) => state.requests.filter((r) => r.seq > seq).map((r) => ({ ...r })),
     route: () => `${location.pathname}${location.search}${location.hash}`,
-    shellOnly: () => state.shellOnly,
+    // Was the page drawn in the browser alone? A route of RenderMode.Client, or an Angular app started in the browser
+    // on a page Angular's server did not draw; not a page the server drew. Null until the page and the app say.
+    shellOnly() {
+      const h = state.serverHtml;
+      if (!h) return null;
+      if (h.ngcm) return true;
+      if (h.drawn) return h.rootChildren === 0;
+      return document.querySelector('[ng-version]') ? true : null;
+    },
     // The page's state for a wait. Idle: the document loaded, the page taken over when it can be, no request in
     // flight, no frame asked for, no finite animation or transition running, and 40 ms of quiet (no frame, no change
     // of the DOM), with a frame after the last input or 100 ms of nothing.

@@ -43,8 +43,9 @@ link, sending a form) waits for it first; `Given the page is hydrated` waits for
 and every page in a browser without JavaScript, have nothing to wait for: the steps go on, and say so in the run's log.
 
 A route Angular renders in the browser alone (`renderMode: RenderMode.Client` in the server routes) arrives as the
-app's empty element, its body marked `ngcm`: `Then the page should have been rendered in the browser alone` says so,
-and without JavaScript such a page stays empty.
+app's empty element, its body marked `ngcm`, and so does every page of an app without server rendering (its plain
+`index.html`, served by a static server): `Then the page should have been rendered in the browser alone` says so, and
+without JavaScript such a page stays empty.
 
 ## From nothing to a green run
 
@@ -186,7 +187,7 @@ server.
 - Node.js 24 or later
 - A webship-js 2.0 test project, webship-js 2.0.18 or later
 - An Angular app, built and served (proven on Angular 22.3 with server rendering, zoneless, and on a route rendered in
-  the browser alone)
+  the browser alone; and on an app of Angular 20.3 without server rendering, served by a static server)
 
 ## Install
 
