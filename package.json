@@ -1,6 +1,6 @@
 {
   "name": "@webship-js/angular-steps",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cucumber step definitions for Angular apps, a plugin for webship-js (Playwright and Cucumber): steps that wait for the app to take the server's page over, follow its router to the end of each navigation, send its forms with JavaScript and without, and wait on its requests and its error pages, never on a fixed time.",
   "main": "tests/step-definitions/angular-helpers.js",
   "files": [
