@@ -19,6 +19,7 @@ interface PostSummary {
         }
       </ul>
       <p><a routerLink="/posts/latest">The latest post</a></p>
+      <p><a routerLink="/posts/9">A post that was taken down</a></p>
       <button type="button" (click)="posts.reload()">Load the posts again</button>
       <p>Status: <span id="status">{{ posts.status() }}</span></p>
     </section>
