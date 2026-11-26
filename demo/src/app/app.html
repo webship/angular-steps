@@ -1,0 +1,12 @@
+<header>
+  <nav aria-label="Main">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Home</a>
+    <a routerLink="/about" routerLinkActive="active" ariaCurrentWhenActive="page">About</a>
+    <a routerLink="/posts" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Posts</a>
+    <a routerLink="/contact" routerLinkActive="active" ariaCurrentWhenActive="page">Contact</a>
+    <a routerLink="/client-only" routerLinkActive="active" ariaCurrentWhenActive="page">Client only</a>
+  </nav>
+</header>
+<main>
+  <router-outlet />
+</main>
